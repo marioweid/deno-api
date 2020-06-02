@@ -2,12 +2,24 @@ version: "3.7"
 
 services:
   deno:
+    container_name: deno-api
     image: "deno-api:0.0.1"
     build: .
     ports:
       - "4000:4000"
-    networks:
-      - deno
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: admin
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongoInit.js:/docker-entrypoint-initdb.d/mongoInit.js
 
 networks:
   deno: {}

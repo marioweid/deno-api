@@ -5,6 +5,15 @@ currently the databse is hosted on Mongo Atlas https://www.mongodb.com/cloud/atl
 # Run the app
 build and run the app: `docker-compose up --build`
 
+# Environment
+to set your own enivonment edit the `.env` file in the root directory
+the .env should be in the .gitignore
+following key can be set in the `.env`-file
+* `DATABASE` name of the database the api is connecting to
+* `DB_PORT` port of the database the api is connecting to
+* `API_PORT` the post of the api
+* `API_HOST` the host of the api
+
 # Api 
  * Get all available users (GET) `localhost:4000/users`
  * Get an specific user (GET) `localhost:4000/users/:id`

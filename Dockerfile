@@ -1,6 +1,6 @@
 FROM hayd/alpine-deno:1.0.2
 
-EXPOSE 4000
+EXPOSE ${API_PORT}
 
 WORKDIR /app
 

@@ -4,11 +4,15 @@ services:
   deno-backend:
     container_name: deno-api
     image: "deno-api:0.0.1"
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - ${API_PORT}:${API_PORT}
     depends_on:
       - mongo
+    volumes:
+      - ./backend/:/usr/app/backend
 
   mongo:
     image: mongo:latest
@@ -28,8 +32,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     volumes:
-      - ./frontend/:/usr/app
-      - /frontend/node_modules
+      - ./frontend/:/usr/app/frontend
+      - ./frontend/node_modules
     ports:
       - 3000:3000
     tty: true

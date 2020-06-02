@@ -2,11 +2,9 @@ FROM node:12.10.0
 
 WORKDIR /usr/app/frontend
 
-COPY package*.json ./
+COPY . .
 
 RUN npm ci -qy
-
-COPY . .
 
 EXPOSE 3000
 

@@ -4,12 +4,15 @@ EXPOSE 4000
 
 WORKDIR /app
 
-USER deno
+# currently not working
+# USER deno
 
+# currently not working
 # COPY deps.ts .
-# RUN deno cache deps.ts
+# RUN deno cache  deps.ts
 
 COPY . .
-RUN deno cache index.ts
+# currently not working
+# RUN deno cache index.ts
 
-CMD ["run", "-A", "index.ts"]
+CMD ["run", "--allow-env", "--allow-net","--allow-plugin","--allow-read","--allow-write","--unstable", "index.ts"]

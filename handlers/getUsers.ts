@@ -1,4 +1,4 @@
-import { Response } from "https://deno.land/x/oak/mod.ts";
+import { Response } from "../deps.ts";
 import { getUsers } from "../services/users.ts";
 
 export default async ({ response }: { response: Response }) => {

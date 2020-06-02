@@ -1,4 +1,4 @@
-import { Response, RouteParams } from "https://deno.land/x/oak/mod.ts";
+import { Response, RouteParams } from "../deps.ts";
 import { getUser } from "../services/users.ts";
 
 export default async (

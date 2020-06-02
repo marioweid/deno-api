@@ -1,5 +1,6 @@
-import { Response, Request, RouteParams } from "https://deno.land/x/oak/mod.ts";
-import { updateUser } from "../services/users.ts";
+import { Response, Request, RouteParams } from "../deps.ts";
+import { updateUser, getUser } from "../services/users.ts";
+import { User } from "../models/user.ts";
 
 export default async (
   { params, request, response }: {
@@ -16,6 +17,13 @@ export default async (
     return;
   }
 
+  const foundUser = await getUser(userId);
+  if (!foundUser) {
+    response.status = 404;
+    response.body = { msg: `User with ID ${userId} not found` };
+    return;
+  }
+
   if (!request.hasBody) {
     response.status = 400;
     response.body = { msg: "Invalid user data" };
@@ -26,7 +34,14 @@ export default async (
     value: { name, role, jiraAdmin },
   } = await request.body();
 
-  await updateUser(userId, { name, role, jiraAdmin });
+  const updateData: User = {
+    name: name,
+    role: role,
+    jiraAdmin: jiraAdmin,
+    added: new Date(),
+  };
 
-  response.body = { msg: "User updated" };
+  const updatedFieldsCount = await updateUser(userId, updateData);
+
+  response.body = { msg: `Updated: ${updatedFieldsCount} fields.` };
 };

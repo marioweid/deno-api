@@ -1,4 +1,4 @@
-import { Request, Response, RouteParams } from "https://deno.land/x/oak/mod.ts";
+import { Response, RouteParams } from "../deps.ts";
 import { deleteUser, getUser } from "../services/users.ts";
 
 export default async (
@@ -19,6 +19,6 @@ export default async (
     return;
   }
 
-  await deleteUser(userId);
-  response.body = { msg: "User deleted" };
+  const deletedItems = await deleteUser(userId);
+  response.body = { msg: `Deleted: ${deletedItems} items.` };
 };

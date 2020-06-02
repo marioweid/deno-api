@@ -1,66 +1,53 @@
-import { fetchData, persistData } from "./db.ts";
 import { User } from "../models/user.ts";
-import createId from "../services/createId.ts";
-
-type UserData = Pick<User, "name" | "role" | "jiraAdmin">;
+import { users } from "../db/collections.ts";
 
 export const getUsers = async (): Promise<User[]> => {
-  const users = await fetchData();
-
+  const usersResult: User[] = await users.find();
   // sort by name
-  return users.sort((a, b) => a.name.localeCompare(b.name));
+  return usersResult.sort((a, b) => a.name.localeCompare(b.name));
 };
 
 export const getUser = async (userId: string): Promise<User | undefined> => {
-  const users = await fetchData();
-
-  return users.find(({ id }) => id === userId);
+  const userResult = await users.findOne({ _id: { $oid: userId } });
+  return userResult;
 };
 
-export const createUser = async (userData: UserData): Promise<string> => {
-  const users = await fetchData();
-
+export const createUser = async (user: User): Promise<User> => {
   const newUser: User = {
-    id: createId(),
-    name: String(userData.name),
-    role: String(userData.role),
-    jiraAdmin: "jiraAdmin" in userData ? Boolean(userData.jiraAdmin) : false,
+    name: user.name,
+    role: user.role,
+    jiraAdmin: !!user.jiraAdmin ? user.jiraAdmin : false,
     added: new Date(),
   };
-
-  await persistData([...users, newUser]);
-
-  return newUser.id;
+  const result = await users.insertOne(newUser);
+  return result;
 };
 
 export const updateUser = async (
   userId: string,
-  userData: UserData,
-): Promise<void> => {
-  const user = await getUser(userId);
+  userData: User,
+): Promise<number> => {
+  const userToUpdate: User = await users.findOne({ _id: { $oid: userId } });
 
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  const updatedUser = {
-    ...user,
-    name: userData.name !== undefined ? String(userData.name) : user.name,
-    role: userData.role !== undefined ? String(userData.role) : user.role,
-    jiraAdmin: userData.jiraAdmin !== undefined
-      ? Boolean(userData.jiraAdmin)
-      : user.jiraAdmin,
+  const updateData: User = {
+    name: !!userData.name ? userData.name : userToUpdate.name,
+    role: !!userData.role ? userData.role : userToUpdate.role,
+    jiraAdmin: !!userData.jiraAdmin
+      ? userData.jiraAdmin
+      : userToUpdate.jiraAdmin,
+    added: userToUpdate.added,
   };
 
-  const users = await fetchData();
-  const filteredUsers = users.filter((user) => user.id !== userId);
-
-  persistData([...filteredUsers, updatedUser]);
+  // updateOne
+  const { modifiedCount } = await users.updateOne(
+    { _id: { $oid: userId } },
+    { $set: updateData },
+  );
+  return modifiedCount;
 };
 
-export const deleteUser = async (userId: string): Promise<void> => {
-  const users = await getUsers();
-  const filteredUsers = users.filter((user) => user.id !== userId);
-
-  persistData(filteredUsers);
+export const deleteUser = async (userId: string): Promise<number> => {
+  // deleteOne
+  const deleteCount = await users.deleteOne({ _id: { $oid: userId } });
+  return deleteCount;
 };

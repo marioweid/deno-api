@@ -1,4 +1,5 @@
-import { Request, Response } from "https://deno.land/x/oak/mod.ts";
+import { Request, Response } from "../deps.ts";
+import { User } from "../models/user.ts";
 import { createUser } from "../services/users.ts";
 
 export default async ({
@@ -21,7 +22,14 @@ export default async ({
     return;
   }
 
-  const userId = await createUser({ name, role, jiraAdmin });
+  const newUser: User = {
+    name: name,
+    role: role,
+    jiraAdmin: jiraAdmin,
+    added: new Date(Date.now()),
+  };
+
+  const userId = await createUser(newUser);
 
   response.body = { msg: "User created", userId };
 };

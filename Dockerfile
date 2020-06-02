@@ -2,8 +2,8 @@ FROM hayd/alpine-deno:1.0.2
 
 EXPOSE ${API_PORT}
 
-WORKDIR /app
 
+WORKDIR /backend
 # currently not working
 # USER deno
 

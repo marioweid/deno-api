@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  deno:
+  deno-backend:
     container_name: deno-api
     image: "deno-api:0.0.1"
     build: .
@@ -20,6 +20,20 @@ services:
       - ${DB_PORT}:${DB_PORT}
     volumes:
       - ./mongoInit.js:/docker-entrypoint-initdb.d/mongoInit.js
+
+  react-frontend:
+    container_name: react-frontend
+    command: npm start
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/:/usr/app
+      - /frontend/node_modules
+    ports:
+      - 3000:3000
+    tty: true
+    stdin_open: true
 
 networks:
   deno: {}

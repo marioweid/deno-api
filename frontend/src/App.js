@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import UserView from "./components/UserView"; // Import a component from another file
 
 function App() {
   function fetchUsers() {
@@ -29,6 +30,8 @@ function App() {
         >
           Learn React
         </a>
+        <UserView>
+        </UserView>
 
         <button onClick={fetchUsers}>
           Click me!
